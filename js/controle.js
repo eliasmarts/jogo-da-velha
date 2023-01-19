@@ -5,6 +5,7 @@ class JogoDaVelha {
         this.game = game;
         this.board = [];
         this.winner = '-';
+        this.winnerTiles = [];
 
         this.state = 'playing';
 
@@ -74,6 +75,7 @@ class JogoDaVelha {
                 && (this.board[0 + i] == this.board[3 + i]
                 && this.board[0 + i] == this.board[6 + i])) {
                     this.winner = this.board[0 + i];
+                    this.winnerTiles = [0 + i, 3 + i, 6 + i];
                     this.updateState('win');
                     return;
             }
@@ -83,6 +85,7 @@ class JogoDaVelha {
                 && (this.board[0 + 3 * i] == this.board[1 + 3 * i]
                 && this.board[0 + 3 * i] == this.board[2 + 3 * i])) {
                     this.winner = this.board[0 + 3 * i];
+                    this.winnerTiles = [0 + 3 * i, 1 + 3 * i, 2 + 3 * i];
                     this.updateState('win');
                     return;
             }
@@ -94,6 +97,7 @@ class JogoDaVelha {
                 && this.board[0] == this.board[4]
                 && this.board[0] == this.board[8]) {
                     this.winner = this.board[0];
+                    this.winnerTiles = [0, 4, 8];
                     this.updateState('win');
                     return;
         }
@@ -102,6 +106,7 @@ class JogoDaVelha {
                 && this.board[2] == this.board[4]
                 && this.board[2] == this.board[6]) {
                     this.winner = this.board[2];
+                    this.winnerTiles = [2, 4, 6];
                     this.updateState('win');
                     return;
         }
@@ -117,8 +122,26 @@ class JogoDaVelha {
             status.innerHTML = 'Empate!';
         else if (state == 'playing')
             status.innerHTML = '';
-        else if (state == 'win')
+        else if (state == 'win') {
             status.innerHTML = 'Vitória de ' + this.winner;
+            this.colorWinnerTiles();
+        }
+    }
+
+
+    colorWinnerTiles() {
+        for (let i = 0; i < this.winnerTiles.length; i++) {
+            let campo = document.getElementById('campo_' + this.winnerTiles[i]);
+            campo.style.backgroundColor = 'green';
+        }
+    }
+
+
+    restartTiles() {
+        for (let i = 0; i < 9; i++) {
+            let campo = document.getElementById('campo_' + i);
+            campo.style.backgroundColor = 'lightsalmon';
+        }
     }
 
 
@@ -130,6 +153,8 @@ class JogoDaVelha {
 
         this.actualPlayer = 'x';
         this.updateState('playing');
+
+        this.restartTiles();
     }
 }
 
