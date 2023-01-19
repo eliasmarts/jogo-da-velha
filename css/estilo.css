@@ -37,6 +37,11 @@ main {
 .campo-jogo {
     flex: 33%;
     height: 33%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
     /*border: 1px solid black;
     */
 }
@@ -53,4 +58,10 @@ main {
 #campo_3, #campo_5 {
     border-top: 2px solid black;
     border-bottom: 2px solid black;
+}
+
+
+.status {
+    border: 1px solid black;
+    font-size: 40px;
 }
