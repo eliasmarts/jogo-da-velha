@@ -4,6 +4,7 @@ class JogoDaVelha {
     constructor(game) {
         this.game = game;
         this.board = [];
+        this.winner = '-';
 
         this.state = 'playing';
 
@@ -61,8 +62,48 @@ class JogoDaVelha {
 
 
     checkState() {
+        // check draw
         if (this.board.lastIndexOf('-') == -1) {
             this.updateState('draw');
+        }
+
+        // check win
+        for (let i = 0; i < 3; i++) {
+            // column
+            if (this.board[0 + i] != '-'
+                && (this.board[0 + i] == this.board[3 + i]
+                && this.board[0 + i] == this.board[6 + i])) {
+                    this.winner = this.board[0 + i];
+                    this.updateState('win');
+                    return;
+            }
+
+            // row
+            if (this.board[0 + 3 * i] != '-'
+                && (this.board[0 + 3 * i] == this.board[1 + 3 * i]
+                && this.board[0 + 3 * i] == this.board[2 + 3 * i])) {
+                    this.winner = this.board[0 + 3 * i];
+                    this.updateState('win');
+                    return;
+            }
+        }
+
+        // diagonals
+        // main
+        if (this.board[0] != '-'
+                && this.board[0] == this.board[4]
+                && this.board[0] == this.board[8]) {
+                    this.winner = this.board[0];
+                    this.updateState('win');
+                    return;
+        }
+        // reversed
+        if (this.board[2] != '-'
+                && this.board[2] == this.board[4]
+                && this.board[2] == this.board[6]) {
+                    this.winner = this.board[2];
+                    this.updateState('win');
+                    return;
         }
     }
 
@@ -76,7 +117,10 @@ class JogoDaVelha {
             status.innerHTML = 'Empate!';
         else if (state == 'playing')
             status.innerHTML = '';
+        else if (state == 'win')
+            status.innerHTML = 'Vitória de ' + this.winner;
     }
+
 
     restart() {
         for (let i = 0; i < 9; i++) {
