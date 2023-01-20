@@ -1,5 +1,3 @@
-
-
 class JogoDaVelhaControle {
     constructor() {
         this.board = [];
@@ -133,10 +131,34 @@ class JogoDaVelhaView {
     }
 
 
+    over(position) {
+        if (this.gameControl.canPlay(position)) {
+            let campo = document.getElementById('campo_' + position);
+
+            if (this.gameControl.actualPlayer == 'x')
+                campo.innerHTML = this.xIcon;
+            else
+                campo.innerHTML = this.circleIcon;
+
+            campo.style.color = "gray";
+        }
+    }
+
+
+    out(position) {
+        if (this.gameControl.canPlay(position)) {
+            let campo = document.getElementById('campo_' + position);
+
+            campo.innerHTML = "";
+        }
+    }
+
     buildBoard() {
         for (let i = 0; i < 9; i++) {
             let el = `<div class="campo-jogo" id="campo_${i}"
-            onclick="gameView.play(${i})">
+            onclick="gameView.play(${i})"
+            onmouseover="gameView.over(${i})"
+            onmouseout="gameView.out(${i})">
             </div>`
 
             this.gameHTML.innerHTML += el;
@@ -153,10 +175,14 @@ class JogoDaVelhaView {
     updateTiles() {
         for (let i = 0; i < 9; i++) {
             let campo = document.getElementById('campo_' + i);
-            if (this.gameControl.board[i] == 'x')
+            if (this.gameControl.board[i] == 'x') {
                 campo.innerHTML = this.xIcon;
-            else if (this.gameControl.board[i] == 'o')
+                campo.style.color = "black";
+            }
+            else if (this.gameControl.board[i] == 'o') {
                 campo.innerHTML = this.circleIcon;
+                campo.style.color = "black";
+            }
             else
                 campo.innerHTML = "";
         }
@@ -202,7 +228,6 @@ class JogoDaVelhaView {
     restart() {
         this.gameControl.restart();
         this.restartTiles();
-        
         this.updateView();
 
     }
