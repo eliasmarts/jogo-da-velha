@@ -1,11 +1,10 @@
-let game = document.getElementById('jogo');
+
 
 class JogoDaVelhaControle {
-    constructor(gameHTML) {
+    constructor() {
         this.board = [];
         this.winner = '-';
         this.winnerTiles = [];
-        this.gameView = new JogoDaVelhaView(this, gameHTML);
 
         this.state = 'playing';
 
@@ -13,11 +12,6 @@ class JogoDaVelhaControle {
             this.board[i] = '-';
 
         this.actualPlayer = 'x';
-    }
-
-
-    start() {
-        this.gameView.buildBoard();
     }
 
 
@@ -29,13 +23,10 @@ class JogoDaVelhaControle {
     play(position) {
         if (this.canPlay(position)) {
             this.board[position] = this.actualPlayer;
-            let campo = document.getElementById('campo_' + position);
 
             this.switchPlayer();
 
             this.checkState();
-
-            this.gameView.updateView();
         }
     }
 
@@ -114,8 +105,6 @@ class JogoDaVelhaControle {
         this.actualPlayer = 'x';
         this.updateState('playing');
         this.winnerTiles = [];
-
-        this.gameView.restart();
     }
 }
 
@@ -124,8 +113,8 @@ class JogoDaVelhaControle {
 
 
 class JogoDaVelhaView {
-    constructor(gameControl, gameHTML) {
-        this.gameControl = gameControl;
+    constructor(gameHTML) {
+        this.gameControl = new JogoDaVelhaControle();
         this.gameHTML = gameHTML;
 
         this.circleIcon = `<svg viewBox="0 0 24 24">
@@ -138,10 +127,16 @@ class JogoDaVelhaView {
     }
 
 
+    play(position) {
+        this.gameControl.play(position);
+        this.updateView();
+    }
+
+
     buildBoard() {
         for (let i = 0; i < 9; i++) {
             let el = `<div class="campo-jogo" id="campo_${i}"
-            onclick="gameControl.play(${i})">
+            onclick="gameView.play(${i})">
             </div>`
 
             this.gameHTML.innerHTML += el;
@@ -199,13 +194,22 @@ class JogoDaVelhaView {
     }
 
 
+    start() {
+        this.buildBoard();
+    }
+
+
     restart() {
+        this.gameControl.restart();
         this.restartTiles();
+        
         this.updateView();
+
     }
 }
 
+let game = document.getElementById('jogo');
 
-let gameControl = new JogoDaVelhaControle(game);
+let gameView = new JogoDaVelhaView(game);
 
-gameControl.start();
+gameView.start();
