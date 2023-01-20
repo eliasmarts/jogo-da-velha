@@ -13,7 +13,7 @@ body {
 main {
     display: flex;
     flex-flow: column wrap;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     align-items: center;
 }
 
@@ -47,8 +47,8 @@ main {
 }
 
 .campo-jogo svg {
-    width: 23px;
-    height: 23px;
+    width: 50%;
+    height: 50%;
 }
 
 #campo_4 {
