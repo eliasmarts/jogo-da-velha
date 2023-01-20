@@ -122,6 +122,9 @@ class JogoDaVelhaView {
         this.xIcon = `<svg viewBox="0 0 24 24">
         <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
     </svg>`
+
+
+        this.icons = {x: this.xIcon, o: this.circleIcon}
     }
 
 
@@ -135,10 +138,7 @@ class JogoDaVelhaView {
         if (this.gameControl.canPlay(position)) {
             let campo = document.getElementById('campo_' + position);
 
-            if (this.gameControl.actualPlayer == 'x')
-                campo.innerHTML = this.xIcon;
-            else
-                campo.innerHTML = this.circleIcon;
+            campo.innerHTML = this.icons[this.gameControl.actualPlayer];
 
             campo.style.color = "gray";
         }
@@ -175,12 +175,8 @@ class JogoDaVelhaView {
     updateTiles() {
         for (let i = 0; i < 9; i++) {
             let campo = document.getElementById('campo_' + i);
-            if (this.gameControl.board[i] == 'x') {
-                campo.innerHTML = this.xIcon;
-                campo.style.color = "black";
-            }
-            else if (this.gameControl.board[i] == 'o') {
-                campo.innerHTML = this.circleIcon;
+            if (this.gameControl.board[i] != '-') {
+                campo.innerHTML = this.icons[this.gameControl.board[i]];
                 campo.style.color = "black";
             }
             else
