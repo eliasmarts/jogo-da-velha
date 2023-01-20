@@ -1,11 +1,11 @@
 let game = document.getElementById('jogo');
 
-class JogoDaVelha {
-    constructor(game) {
-        this.game = game;
+class JogoDaVelhaControle {
+    constructor(gameHTML) {
         this.board = [];
         this.winner = '-';
         this.winnerTiles = [];
+        this.gameView = new JogoDaVelhaView(this, gameHTML);
 
         this.state = 'playing';
 
@@ -13,41 +13,29 @@ class JogoDaVelha {
             this.board[i] = '-';
 
         this.actualPlayer = 'x';
-
-        this.circleIcon = `<svg style="width:90px;height:90px" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-    </svg>`
-
-        this.xIcon = `<svg style="width:90px;height:90px" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-    </svg>`
     }
 
 
-    buildBoard() {
-        for (let i = 0; i < 9; i++) {
-            let el = `<div class="campo-jogo" id="campo_${i}"
-            onclick="gameControl.play(${i})">
-            </div>`
+    start() {
+        this.gameView.buildBoard();
+    }
 
-            game.innerHTML += el;
-        }
+
+    canPlay(position) {
+        return this.board[position] == '-' && this.state == 'playing';
     }
 
 
     play(position) {
-        if (this.board[position] == '-' && this.state == 'playing') {
+        if (this.canPlay(position)) {
             this.board[position] = this.actualPlayer;
             let campo = document.getElementById('campo_' + position);
-
-            if (this.actualPlayer == 'x')
-                campo.innerHTML = this.xIcon;
-            else
-                campo.innerHTML = this.circleIcon;
 
             this.switchPlayer();
 
             this.checkState();
+
+            this.gameView.updateView();
         }
     }
 
@@ -115,23 +103,86 @@ class JogoDaVelha {
 
     updateState(state) {
         this.state = state;
+    }
 
+
+    restart() {
+        for (let i = 0; i < 9; i++) {
+            this.board[i] = '-';
+        }
+
+        this.actualPlayer = 'x';
+        this.updateState('playing');
+        this.winnerTiles = [];
+
+        this.gameView.restart();
+    }
+}
+
+
+class JogoDaVelhaView {
+    constructor(gameControl, gameHTML) {
+        this.gameControl = gameControl;
+        this.gameHTML = gameHTML;
+
+        this.circleIcon = `<svg style="width:90px;height:90px" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+    </svg>`
+
+        this.xIcon = `<svg style="width:90px;height:90px" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+    </svg>`
+    }
+
+
+    buildBoard() {
+        for (let i = 0; i < 9; i++) {
+            let el = `<div class="campo-jogo" id="campo_${i}"
+            onclick="gameControl.play(${i})">
+            </div>`
+
+            this.gameHTML.innerHTML += el;
+        }
+    }
+
+
+    updateView() {
+        this.updateTiles();
+        this.updateState();
+    }
+
+
+    updateTiles() {
+        for (let i = 0; i < 9; i++) {
+            let campo = document.getElementById('campo_' + i);
+            if (this.gameControl.board[i] == 'x')
+                campo.innerHTML = this.xIcon;
+            else if (this.gameControl.board[i] == 'o')
+                campo.innerHTML = this.circleIcon;
+            else
+                campo.innerHTML = "";
+        }
+    }
+
+
+    updateState() {
         let status = document.getElementById('statusJogo');
+        let state = this.gameControl.state;
 
         if (state == 'draw')
             status.innerHTML = 'Empate!';
         else if (state == 'playing')
             status.innerHTML = '';
         else if (state == 'win') {
-            status.innerHTML = 'Vitória de ' + this.winner;
+            status.innerHTML = 'Vitória de ' + this.gameControl.winner;
             this.colorWinnerTiles();
         }
     }
 
 
     colorWinnerTiles() {
-        for (let i = 0; i < this.winnerTiles.length; i++) {
-            let campo = document.getElementById('campo_' + this.winnerTiles[i]);
+        for (let i = 0; i < this.gameControl.winnerTiles.length; i++) {
+            let campo = document.getElementById('campo_' + this.gameControl.winnerTiles[i]);
             campo.style.backgroundColor = 'green';
         }
     }
@@ -146,19 +197,12 @@ class JogoDaVelha {
 
 
     restart() {
-        for (let i = 0; i < 9; i++) {
-            this.board[i] = '-';
-            document.getElementById('campo_' + i).innerHTML = "";
-        }
-
-        this.actualPlayer = 'x';
-        this.updateState('playing');
-
         this.restartTiles();
+        this.updateView();
     }
 }
 
 
-let gameControl = new JogoDaVelha(game);
+let gameControl = new JogoDaVelhaControle(game);
 
-gameControl.buildBoard();
+gameControl.start();

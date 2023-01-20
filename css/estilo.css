@@ -46,6 +46,11 @@ main {
     */
 }
 
+.campo-jogo svg {
+    width: 23px;
+    height: 23px;
+}
+
 #campo_4 {
     border: 2px solid black;
 }
